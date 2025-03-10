@@ -32,6 +32,7 @@ func main() {
 
 	e.POST("/login", handlers.Login)
 	e.POST("/register", handlers.Register)
+	e.POST("/updateprofile", handlers.UpdateProfile)
 
 	log.Fatal(e.Start(":8080"))
 }

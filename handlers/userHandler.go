@@ -3,6 +3,7 @@ package handlers
 import (
 	"archroid/archGap/config"
 	"archroid/archGap/services"
+	"archroid/archGap/utils"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -73,40 +74,41 @@ func Register(c echo.Context) error {
 	})
 }
 
-// func UpdateProfile(c echo.Context) error {
-// 	// Get the user ID from the JWT token (you should pass the token in the Authorization header)
-// 	userID, err := utils.ParseJWT(c.Request().Header.Get("Authorization"))
-// 	if err != nil {
-// 		return c.JSON(http.StatusUnauthorized, map[string]string{
-// 			"message": "Invalid or expired token",
-// 		})
-// 	}
+func UpdateProfile(c echo.Context) error {
+	// Get the user ID from the JWT token (you should pass the token in the Authorization header)
+	userID, err := utils.ParseJWT(c.Request().Header.Get("Authorization"))
 
-// 	// Get updated profile data from the request body
-// 	var updateRequest struct {
-// 		Email    string `json:"email"`
-// 		Password string `json:"password"`
-// 	}
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, map[string]string{
+			"message": "Invalid or expired token",
+		})
+	}
 
-// 	if err := c.Bind(&updateRequest); err != nil {
-// 		return c.JSON(http.StatusBadRequest, map[string]string{
-// 			"message": "Invalid input",
-// 		})
-// 	}
+	// Get updated profile data from the request body
+	var updateRequest struct {
+		Username       string `json:"username"`
+		ProfilePicture string `json:"profilepicture"`
+	}
 
-// 	// Call the update profile service
-// 	user, err := services.UpdateProfile(config.DB, userID, updateRequest.Email, updateRequest.Password)
-// 	if err != nil {
-// 		return c.JSON(http.StatusInternalServerError, map[string]string{
-// 			"message": err.Error(),
-// 		})
-// 	}
+	if err := c.Bind(&updateRequest); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"message": "Invalid input",
+		})
+	}
 
-// 	// Return updated user profile (without password)
-// 	return c.JSON(http.StatusOK, map[string]interface{}{
-// 		"user": map[string]interface{}{
-// 			"id":    user.ID,
-// 			"email": user.Email,
-// 		},
-// 	})
-// }
+	// Call the update profile service
+	user, err := services.UpdateProfile(config.DB, userID, updateRequest.Username, updateRequest.ProfilePicture)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"message": err.Error(),
+		})
+	}
+
+	// Return updated user profile (without password)
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"user": map[string]interface{}{
+			"id":    user.ID,
+			"email": user.Email,
+		},
+	})
+}

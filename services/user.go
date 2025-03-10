@@ -2,8 +2,9 @@ package services
 
 import (
 	"archroid/archGap/models"
-	"errors"
 	"archroid/archGap/utils"
+	"errors"
+
 	"gorm.io/gorm"
 )
 
@@ -33,7 +34,6 @@ func LoginUser(db *gorm.DB, email, password string) (*models.User, string, error
 	return &user, token, nil
 }
 
-
 // RegisterUser handles the registration of a new user
 func RegisterUser(db *gorm.DB, email, password string) (*models.User, error) {
 	// Check if user with the same email already exists
@@ -62,4 +62,32 @@ func RegisterUser(db *gorm.DB, email, password string) (*models.User, error) {
 
 	// Return the created user (excluding the password)
 	return &newUser, nil
+}
+
+// UpdateProfile updates the user's email and/or password
+func UpdateProfile(db *gorm.DB, userID uint, username string, profilepicture string) (*models.User, error) {
+	var user models.User
+
+	// Find the user by their ID
+	if err := db.First(&user, userID).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, errors.New("user not found")
+		}
+		return nil, err
+	}
+
+	if username != "" {
+		user.Username = username
+	}
+
+	if profilepicture != "" {
+		user.ProfilePicture = profilepicture
+	}
+
+
+	if err := db.Save(&user).Error; err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }

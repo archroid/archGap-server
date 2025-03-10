@@ -9,5 +9,5 @@ type User struct {
 	Username       string
 	ProfilePicture string
 	LastSeen       *gorm.DeletedAt 
-	IsOnline       bool            
+	IsOnline       bool       
 }
