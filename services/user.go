@@ -84,7 +84,6 @@ func UpdateProfile(db *gorm.DB, userID uint, username string, profilepicture str
 		user.ProfilePicture = profilepicture
 	}
 
-
 	if err := db.Save(&user).Error; err != nil {
 		return nil, err
 	}

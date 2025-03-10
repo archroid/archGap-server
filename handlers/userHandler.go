@@ -4,7 +4,9 @@ import (
 	"archroid/archGap/config"
 	"archroid/archGap/services"
 	"archroid/archGap/utils"
+	"fmt"
 	"net/http"
+	"path/filepath"
 
 	"github.com/labstack/echo/v4"
 )
@@ -109,6 +111,60 @@ func UpdateProfile(c echo.Context) error {
 		"user": map[string]interface{}{
 			"id":    user.ID,
 			"email": user.Email,
+		},
+	})
+}
+
+func UpdateAvatar(c echo.Context) error {
+	// Get the user ID from the JWT token (you should pass the token in the Authorization header)
+	userID, err := utils.ParseJWT(c.Request().Header.Get("Authorization"))
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, map[string]string{
+			"message": "Invalid or expired token",
+		})
+	}
+
+	// Retrieve the file from the form data
+	file, err := c.FormFile("profilepicture")
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"message": "Failed to get file",
+		})
+	}
+
+	// Open the file
+	src, err := file.Open()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"message": "Failed to open file",
+		})
+	}
+	defer src.Close()
+
+	// Save the file to a specific location
+	dst, err := utils.SaveFile(src, fmt.Sprintf("%d_%s", userID, filepath.Ext(file.Filename)), "profilepicture")
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"message": "Failed to save file",
+		})
+	}
+
+	var username string
+
+	// Update the user's profile picture in the database
+	user, err := services.UpdateProfile(config.DB, userID, username, dst)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"message": err.Error(),
+		})
+	}
+
+	// Return updated user profile (without password)
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"user": map[string]interface{}{
+			"id":             user.ID,
+			"email":          user.Email,
+			"profilepicture": user.ProfilePicture,
 		},
 	})
 }
