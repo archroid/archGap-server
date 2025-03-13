@@ -2,6 +2,7 @@ package main
 
 import (
 	"archroid/archGap/db"
+	"archroid/archGap/handlers"
 	"net/http"
 
 	"github.com/charmbracelet/log"
@@ -29,8 +30,8 @@ func main() {
 		return c.String(http.StatusOK, "pong")
 	})
 
-	// e.POST("/login", handlers.Login)
-	// e.POST("/register", handlers.Register)
+	e.POST("/login", handlers.Login)
+	e.POST("/register", handlers.Register)
 	// e.POST("/updateprofile", handlers.UpdateProfile)
 	// e.POST("/updateavatar", handlers.UpdateAvatar)
 

@@ -34,7 +34,7 @@ func LoginUser(email string, password string) (*models.User, string, error) {
 	return &user, token, nil
 }
 
-func RegisterUser(email string, password string, name string) (*models.User, error) {
+func RegisterUser(email string, password string) (*models.User, error) {
 	// Check if user with the same email already exists
 	var existingUser models.User
 	if err := DB.Where("email = ?", email).First(&existingUser).Error; err == nil {
