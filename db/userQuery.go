@@ -93,65 +93,6 @@ func UpdateUser(userID uint, name *string, profilePicture *string, lastseen *tim
 	return nil
 }
 
-func NewChat(chatname string) (*models.Chat, error) {
-	chat := models.Chat{ChatName: chatname}
-	err := DB.Create(&chat).Error
-	if err != nil {
-		return nil, errors.New("error creating chat")
-	}
-	return &chat, nil
-}
-
-func AddUserToChat(chatID uint, userIDs []uint) ([]models.ChatParticipant, error) {
-	participants := []models.ChatParticipant{}
-	for _, userID := range userIDs {
-		participant := models.ChatParticipant{ChatID: chatID, UserID: userID}
-		participants = append(participants, participant)
-	}
-	err := DB.Create(&participants).Error
-	if err != nil {
-		return nil, errors.New("error adding user to chat")
-	}
-	return participants, nil
-}
-
-func SendMessage(chatID uint, senderID uint, content string, messageType string) error {
-	message := models.Message{
-		SenderID:    senderID,
-		ChatID:      chatID,
-		Content:     content,
-		MessageType: messageType,
-		Status:      "sent",
-	}
-
-	err := DB.Create(&message).Error
-	if err != nil {
-		return errors.New("error sending message")
-	}
-	return nil
-}
-
-// return all messages of a chat
-func GetMessagesinChat(chatID uint) ([]models.Message, error) {
-	messages := []models.Message{}
-	err := DB.Where("chat_id = ?", chatID).Find(&messages).Error
-	if err != nil {
-		return nil, errors.New("error getting messages")
-	}
-	return messages, nil
-}
-
-// return all users of a chat
-func GetUsersbyChat(chatID uint) ([]models.User, error) {
-	users := []models.User{}
-	err := DB.Joins("JOIN chat_participants ON chat_participants.user_id = users.user_id").
-		Where("chat_participants.chat_id = ?", chatID).
-		Find(&users).Error
-	if err != nil {
-		return nil, errors.New("error getting users")
-	}
-	return users, nil
-}
 
 // return all chats of a user
 func GetChatsbyUser(userID uint) ([]models.Chat, error) {

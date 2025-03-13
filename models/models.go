@@ -34,6 +34,8 @@ type Message struct {
 type Chat struct {
 	gorm.Model
 	ChatName string
+	IsGroup  bool
+	Avatar   string
 
 	Participants []User `gorm:"many2many:chat_participants"`
 	Messages     []Message

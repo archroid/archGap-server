@@ -37,5 +37,9 @@ func main() {
 	e.GET("/getuser", handlers.GetUser)
 
 
+
+	e.GET("/ws", handlers.HandleWebSocket)
+
+
 	log.Fatal(e.Start(":8080"))
 }
