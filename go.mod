@@ -5,7 +5,6 @@ go 1.23.6
 require (
 	github.com/charmbracelet/log v0.4.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
-	github.com/gorilla/websocket v1.5.3
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.13.3
 	golang.org/x/crypto v0.31.0
