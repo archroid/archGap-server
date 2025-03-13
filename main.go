@@ -32,8 +32,10 @@ func main() {
 
 	e.POST("/login", handlers.Login)
 	e.POST("/register", handlers.Register)
-	// e.POST("/updateprofile", handlers.UpdateProfile)
-	// e.POST("/updateavatar", handlers.UpdateAvatar)
+	e.POST("/updateuser", handlers.UpdateUser)
+	e.POST("/updateuseravatar", handlers.UpdateUserAvatar)
+	e.GET("/getuser", handlers.GetUser)
+
 
 	log.Fatal(e.Start(":8080"))
 }
