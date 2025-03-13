@@ -99,7 +99,7 @@ func subscribeUserToChat(userID uint, chatID uint, conn *websocket.Conn) {
 	}
 
 	chatSubscriptions[chatID][userID] = conn
-	log.Printf("User %s subscribed to chat %d\n", int(userID), chatID)
+	log.Printf("User %d subscribed to chat %d\n", userID, chatID)
 }
 
 func unsubscribeUserFromChat(userID uint, chatID uint) {
@@ -108,7 +108,7 @@ func unsubscribeUserFromChat(userID uint, chatID uint) {
 
 	// Remove the user from chat subscriptions
 	delete(chatSubscriptions[chatID], userID)
-	log.Printf("User %s unsubscribed from chat %d\n", int(userID), chatID)
+	log.Printf("User %d unsubscribed from chat %d\n", userID, chatID)
 }
 
 func sendMessageToChat(chatID uint, message string) {
@@ -119,7 +119,7 @@ func sendMessageToChat(chatID uint, message string) {
 	for userID, conn := range chatSubscriptions[chatID] {
 		err := conn.WriteMessage(websocket.TextMessage, []byte(message))
 		if err != nil {
-			log.Printf("Error sending message to user %s: %v", int(userID), err)
+			log.Printf("Error sending message to user %d: %v", userID, err)
 		}
 	}
 }
