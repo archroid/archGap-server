@@ -1,9 +1,7 @@
 package main
 
 import (
-	"archroid/archGap/config"
-	"archroid/archGap/handlers"
-	"archroid/archGap/websocket"
+	"archroid/archGap/db"
 	"net/http"
 
 	"github.com/charmbracelet/log"
@@ -13,28 +11,28 @@ import (
 )
 
 func main() {
-	config.InitDB()
+	db.InitDB()
 
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
 	// WebSocket Route
-	e.GET("/ws", echo.WrapHandler(http.HandlerFunc(websocket.HandleWebSocket)))
+	// e.GET("/ws", echo.WrapHandler(http.HandlerFunc(websocket.HandleWebSocket)))
+	// e.GET("/ws", handlers.HandleWebSocket)
 
 	// Start WebSocket broadcasting
-	go websocket.BroadcastMessages()
+	// go websocket.BroadcastMessages()
 
 	// Routes
 	e.GET("/ping", func(c echo.Context) error {
 		return c.String(http.StatusOK, "pong")
 	})
 
-	e.POST("/login", handlers.Login)
-	e.POST("/register", handlers.Register)
-	e.POST("/updateprofile", handlers.UpdateProfile)
-	e.POST("/updateavatar", handlers.UpdateAvatar)
-
+	// e.POST("/login", handlers.Login)
+	// e.POST("/register", handlers.Register)
+	// e.POST("/updateprofile", handlers.UpdateProfile)
+	// e.POST("/updateavatar", handlers.UpdateAvatar)
 
 	log.Fatal(e.Start(":8080"))
 }

@@ -1,4 +1,4 @@
-package config
+package db
 
 import (
 	"archroid/archGap/models"
@@ -32,12 +32,12 @@ func InitDB() {
 	}
 
 	// Migrate the schema, create tables if they don't exist
-	err = DB.AutoMigrate(&models.User{} , &models.Message{})
+	err = DB.AutoMigrate(&models.User{}, &models.Message{}, &models.Chat{}, &models.ChatParticipant{})
 	if err != nil {
 		panic("failed to migrate database: " + err.Error())
 	}
 }
 
-func DbManager() *gorm.DB {
+func getdb() *gorm.DB {
 	return DB
 }

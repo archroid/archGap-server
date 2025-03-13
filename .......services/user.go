@@ -77,7 +77,7 @@ func UpdateProfile(db *gorm.DB, userID uint, username string, profilepicture str
 	}
 
 	if username != "" {
-		user.Username = username
+		user.Name = username
 	}
 
 	if profilepicture != "" {
