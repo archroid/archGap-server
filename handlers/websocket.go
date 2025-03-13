@@ -12,18 +12,11 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-var userID uint
 var mutex = &sync.Mutex{}
 
-var upgrader = websocket.Upgrader{
-	CheckOrigin: func(r *http.Request) bool {
-		return true // Allow all connections for simplicity
-	},
-}
-
 type WebSocketMessage struct {
-	Type   string `json:"type"`
-	ChatID uint   `json:"chatID"`
+	Type    string `json:"type"`
+	ChatID  uint   `json:"chatID"`
 	Content string `json:"content"`
 }
 
@@ -34,8 +27,7 @@ type WebSocketConnection struct {
 
 var (
 	userConnections   = make(map[uint]*websocket.Conn)
-	chatSubscriptions = make(map[uint]map[uint]*websocket.Conn) // map of chatID -> map of userID -> conn
-	mu                sync.RWMutex
+	chatSubscriptions = make(map[uint]map[uint]*websocket.Conn)
 )
 
 func HandleWebSocket(c echo.Context) error {
@@ -64,7 +56,6 @@ func HandleWebSocket(c echo.Context) error {
 	mutex.Unlock()
 
 	for {
-		// Read the message from the WebSocket
 		messageType, p, err := conn.ReadMessage()
 		if err != nil {
 			log.Println("Error reading message:", err)
@@ -98,7 +89,6 @@ func HandleWebSocket(c echo.Context) error {
 	return nil
 }
 
-// Subscribe user to a chat
 func subscribeUserToChat(userID uint, chatID uint, conn *websocket.Conn) {
 	mutex.Lock()
 	defer mutex.Unlock()
@@ -108,22 +98,19 @@ func subscribeUserToChat(userID uint, chatID uint, conn *websocket.Conn) {
 		chatSubscriptions[chatID] = make(map[uint]*websocket.Conn)
 	}
 
-	// Add the user connection to the chat subscriptions
 	chatSubscriptions[chatID][userID] = conn
-	fmt.Printf("User %s subscribed to chat %d\n", userID, chatID)
+	log.Printf("User %s subscribed to chat %d\n", int(userID), chatID)
 }
 
-// Unsubscribe user from a chat
 func unsubscribeUserFromChat(userID uint, chatID uint) {
 	mutex.Lock()
 	defer mutex.Unlock()
 
 	// Remove the user from chat subscriptions
 	delete(chatSubscriptions[chatID], userID)
-	fmt.Printf("User %s unsubscribed from chat %d\n", userID, chatID)
+	log.Printf("User %s unsubscribed from chat %d\n", int(userID), chatID)
 }
 
-// Broadcast message to all users in a chat
 func sendMessageToChat(chatID uint, message string) {
 	mutex.Lock()
 	defer mutex.Unlock()
@@ -132,7 +119,7 @@ func sendMessageToChat(chatID uint, message string) {
 	for userID, conn := range chatSubscriptions[chatID] {
 		err := conn.WriteMessage(websocket.TextMessage, []byte(message))
 		if err != nil {
-			log.Printf("Error sending message to user %s: %v", userID, err)
+			log.Printf("Error sending message to user %s: %v", int(userID), err)
 		}
 	}
 }
