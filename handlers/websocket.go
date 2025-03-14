@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"archroid/archGap/db"
 	"archroid/archGap/utils"
 	"encoding/json"
 	"fmt"
@@ -15,9 +16,11 @@ import (
 var mutex = &sync.Mutex{}
 
 type WebSocketMessage struct {
-	Type    string `json:"type"`
-	ChatID  uint   `json:"chatID"`
-	Content string `json:"content"`
+	Type        string `json:"type"`
+	ChatID      uint   `json:"chatID"`
+	Content     string `json:"content"`
+	Status      string `json:"status"`
+	MessageType string `json:"messageType"`
 }
 
 type WebSocketConnection struct {
@@ -76,7 +79,7 @@ func HandleWebSocket(c echo.Context) error {
 				unsubscribeUserFromChat(userID, msg.ChatID)
 			} else if msg.Type == "message" && msg.Content != "" {
 				// Handle sending a message to the chat
-				sendMessageToChat(msg.ChatID, fmt.Sprintf("User %d: %s", userID, msg.Content))
+				sendMessageToChat(msg.ChatID, fmt.Sprintf("User %d: %s", userID, msg.Content), msg.MessageType)
 			}
 		}
 	}
@@ -111,13 +114,22 @@ func unsubscribeUserFromChat(userID uint, chatID uint) {
 	log.Printf("User %d unsubscribed from chat %d\n", userID, chatID)
 }
 
-func sendMessageToChat(chatID uint, message string) {
+func sendMessageToChat(chatID uint, message string, messagetype string) {
 	mutex.Lock()
 	defer mutex.Unlock()
 
 	// Loop through all users subscribed to the chat and send them the message
 	for userID, conn := range chatSubscriptions[chatID] {
-		err := conn.WriteMessage(websocket.TextMessage, []byte(message))
+
+		err := db.SendMessage(chatID, userID, message, messagetype)
+		if err != nil {
+			err = conn.WriteMessage(websocket.TextMessage, []byte("error sending message"))
+			if err != nil {
+				log.Printf("Error sending message to user %d: %v", userID, err)
+			}
+			log.Printf("Error sending message to chat %d: %v", chatID, err)
+		}
+		err = conn.WriteMessage(websocket.TextMessage, []byte(message))
 		if err != nil {
 			log.Printf("Error sending message to user %d: %v", userID, err)
 		}

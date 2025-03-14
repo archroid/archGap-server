@@ -18,13 +18,6 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	// WebSocket Route
-	// e.GET("/ws", echo.WrapHandler(http.HandlerFunc(websocket.HandleWebSocket)))
-	// e.GET("/ws", handlers.HandleWebSocket)
-
-	// Start WebSocket broadcasting
-	// go websocket.BroadcastMessages()
-
 	// Routes
 	e.GET("/ping", func(c echo.Context) error {
 		return c.String(http.StatusOK, "pong")
@@ -36,10 +29,9 @@ func main() {
 	e.POST("/updateuseravatar", handlers.UpdateUserAvatar)
 	e.GET("/getuser", handlers.GetUser)
 
-
+	e.GET("/openpvchat", handlers.OpenPvChat)
 
 	e.GET("/ws", handlers.HandleWebSocket)
-
 
 	log.Fatal(e.Start(":8080"))
 }

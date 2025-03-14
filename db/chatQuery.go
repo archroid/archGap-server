@@ -5,8 +5,8 @@ import (
 	"errors"
 )
 
-func NewChat(chatname string) (*models.Chat, error) {
-	chat := models.Chat{ChatName: chatname}
+func NewChat(chatname string, isgroup bool) (*models.Chat, error) {
+	chat := models.Chat{ChatName: chatname, IsGroup: isgroup}
 	err := DB.Create(&chat).Error
 	if err != nil {
 		return nil, errors.New("error creating chat")
@@ -28,7 +28,6 @@ func AddUserToChat(chatID uint, userIDs []uint) ([]models.ChatParticipant, error
 }
 
 func IsChatExist(userID1 uint, userID2 uint) (bool, uint, error) {
-	var chatParticipant models.ChatParticipant
 	var chat models.Chat
 	err := DB.
 		Where("is_group = ?", false).
@@ -40,9 +39,9 @@ func IsChatExist(userID1 uint, userID2 uint) (bool, uint, error) {
 	if err != nil {
 		return false, 0, errors.New("error finding chat")
 	}
-	return true, chatParticipant.ChatID, nil
-}
 
+	return true, chat.ID, nil
+}
 
 // return all users of a chat
 func GetUsersbyChat(chatID uint) ([]models.User, error) {

@@ -38,6 +38,6 @@ func InitDB() {
 	}
 }
 
-func getdb() *gorm.DB {
+func Getdb() *gorm.DB {
 	return DB
 }
