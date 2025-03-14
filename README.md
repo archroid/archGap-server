@@ -66,18 +66,18 @@ The server will start running on the configured port. You can change the port by
 
 ### Authentication
 
-- `POST /api/register` - Register a new user
-- `POST /api/login` - Authenticate a user and return a JWT
+- `POST /register` - Register a new user
+- `POST /login` - Authenticate a user and return a JWT
 
 ### Messages
 
-- `POST /api/messages` - Send a new message
-- `GET /api/messages` - Retrieve message history
+- `POST /messages` - Send a new message
+- `GET /messages` - Retrieve message history
 
 ### Users
 
-- `GET /api/users` - Get a list of users
-- `GET /api/users/:id` - Get details of a specific user
+- `GET /users` - Get a list of users
+- `GET /users/:id` - Get details of a specific user
 
 ### WebSocket
 
