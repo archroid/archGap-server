@@ -1,44 +1,96 @@
-# ArchGap
+# archGap-server
 
-ArchGap is a project aimed at bridging the gap between different architectural styles and design patterns in software development.
+Server side of my own chat app.
 
-## Table of Contents
-- [Introduction](#introduction)
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
+## Description
 
-## Introduction
-ArchGap provides tools and guidelines to help developers integrate various architectural styles seamlessly into their projects.
+`archGap-server` is the backend server for the `archGap` chat application. This server is built using Go and handles all server-side operations, including user authentication, message handling, and real-time communication.
 
 ## Features
-- Support for multiple architectural styles
-- Easy integration with existing projects
-- Comprehensive documentation and examples
+
+- User authentication and authorization
+- Real-time messaging
+- Group chat support
+- Message history
+- User presence and status updates
+
+## Requirements
+
+- Go 1.19 or later
 
 ## Installation
-To install ArchGap, clone the repository and run the setup script:
+
+1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/archgap.git
-cd archgap
-./setup.sh
+git clone https://github.com/archroid/archGap-server.git
 ```
 
-## Usage
-After installation, you can start using ArchGap by importing it into your project:
+2. Navigate to the project directory:
 
-```python
-import archgap
-
-# Example usage
-archgap.initialize()
+```bash
+cd archGap-server
 ```
+
+3. Install dependencies:
+
+```bash
+go mod download
+```
+
+## Configuration
+
+Create a `.env` file in the root directory and configure the following environment variables:
+
+```env
+DB_HOST=your_database_host
+DB_PORT=your_database_port
+DB_USER=your_database_user
+DB_PASSWORD=your_database_password
+DB_NAME=your_database_name
+
+JWT_SECRET=your_jwt_secret_key
+```
+
+## Running the Server
+
+Start the server with the following command:
+
+```bash
+go run main.go
+```
+
+The server will start running on the configured port. You can change the port by setting the `PORT` environment variable in the `.env` file.
+
+## API Endpoints
+
+### Authentication
+
+- `POST /api/register` - Register a new user
+- `POST /api/login` - Authenticate a user and return a JWT
+
+### Messages
+
+- `POST /api/messages` - Send a new message
+- `GET /api/messages` - Retrieve message history
+
+### Users
+
+- `GET /api/users` - Get a list of users
+- `GET /api/users/:id` - Get details of a specific user
+
+### WebSocket
+
+- Connect to `/ws` for real-time messaging
 
 ## Contributing
-We welcome contributions! Please read our [contributing guidelines](CONTRIBUTING.md) for more details.
+
+Feel free to submit issues and enhancement requests. Please follow the [contributing guidelines](CONTRIBUTING.md).
 
 ## License
+
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+For any questions or inquiries, please reach out to [archroid](https://github.com/archroid).
