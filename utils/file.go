@@ -4,6 +4,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // SaveFile saves the uploaded file to a specific location and returns the file path
@@ -38,4 +39,24 @@ func SaveFile(src io.Reader, filename string, filetype string) (string, error) {
 	}
 
 	return filePath, nil
+}
+
+// GetFileType takes a filename and returns its type (video, picture, document, or unknown)
+func GetFileType(filename string) string {
+	ext := strings.ToLower(filepath.Ext(filename))
+
+	videoExtensions := map[string]bool{".mp4": true, ".mkv": true, ".avi": true, ".mov": true, ".wmv": true, ".flv": true}
+	pictureExtensions := map[string]bool{".jpg": true, ".jpeg": true, ".png": true, ".gif": true, ".bmp": true, ".svg": true, ".webp": true}
+	audioExtensions := map[string]bool{".mp3": true, ".wav": true, ".flac": true, ".aac": true, ".ogg": true, ".wma": true, ".m4a": true}
+
+	switch {
+	case videoExtensions[ext]:
+		return "video"
+	case pictureExtensions[ext]:
+		return "picture"
+	case audioExtensions[ext]:
+		return "audio"
+	default:
+		return "document"
+	}
 }

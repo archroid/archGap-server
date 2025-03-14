@@ -16,7 +16,7 @@ type User struct {
 	IsOnline       bool
 
 	Chats    []Chat    `gorm:"many2many:chat_participants"`
-	Messages []Message `gorm:"foreignKey:SenderID"` // ✅ Explicit foreign key
+	Messages []Message `gorm:"foreignKey:SenderID"` 
 }
 
 type Message struct {

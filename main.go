@@ -16,7 +16,7 @@ func main() {
 
 	e := echo.New()
 
-	// Middleware
+	// logger settings
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format:           `${time_custom} ${method} ${uri} ${status} ${error} ` + "\n",
 		CustomTimeFormat: "2006-01-02 15:04:05",
@@ -36,6 +36,8 @@ func main() {
 	e.POST("/updateuseravatar", handlers.UpdateUserAvatar)
 	e.GET("/getuser", handlers.GetUser)
 
+
+	e.POST("/uploadfile", handlers.UploadFile)
 	e.GET("/openpvchat", handlers.OpenPvChat)
 
 	e.GET("/ws", handlers.HandleWebSocket)
