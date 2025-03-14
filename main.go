@@ -18,11 +18,12 @@ func main() {
 
 	// Middleware
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-		Format: `${time_custom} ${method} ${uri} ${status} ${error} ` + "\n",
+		Format:           `${time_custom} ${method} ${uri} ${status} ${error} ` + "\n",
 		CustomTimeFormat: "2006-01-02 15:04:05",
 	}))
 
 	e.Use(middleware.Recover())
+	e.HideBanner = true
 
 	// Routes
 	e.GET("/ping", func(c echo.Context) error {
