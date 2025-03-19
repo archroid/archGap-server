@@ -25,6 +25,8 @@ func main() {
 	e.Use(middleware.Recover())
 	e.HideBanner = true
 
+	e.Use(middleware.CORS())
+
 	// Routes
 	e.GET("/ping", func(c echo.Context) error {
 		return c.String(http.StatusOK, "pong")
@@ -41,6 +43,8 @@ func main() {
 	e.GET("/openpvchat", handlers.OpenPvChat)
 
 	e.GET("/ws", handlers.HandleWebSocket)
+
+	
 
 	log.Fatal(e.Start(":8080"))
 }
