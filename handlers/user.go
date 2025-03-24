@@ -192,3 +192,22 @@ func UpdateUserAvatar(c echo.Context) error {
 	})
 
 }
+
+func GetChatsbyUser(c echo.Context) error {
+	userID, err := utils.ParseJWT(c.Request().Header.Get("Authorization"))
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, map[string]string{
+			"message": "Invalid or expired token",
+		})
+	}
+
+	// Call the get user chats service
+	chats, err := db.GetChatsbyUser(userID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"message": err.Error(),
+		})
+	}
+	// Return the user's chats
+	return c.JSON(http.StatusOK, chats)
+}

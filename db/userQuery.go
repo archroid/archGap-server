@@ -94,17 +94,20 @@ func UpdateUser(userID uint, name *string, profilePicture *string, lastseen *tim
 }
 
 
-// return all chats of a user
 func GetChatsbyUser(userID uint) ([]models.Chat, error) {
-	chats := []models.Chat{}
-	err := DB.Joins("JOIN chat_participants ON chat_participants.chat_id = chats.chat_id").
+	var chats []models.Chat
+
+	err := DB.Joins("JOIN chat_participants ON chat_participants.chat_id = chats.id").
 		Where("chat_participants.user_id = ?", userID).
 		Find(&chats).Error
+
 	if err != nil {
 		return nil, errors.New("error getting chats")
 	}
+
 	return chats, nil
 }
+
 
 // return if user is online or not
 func GetUserOnline(userID uint) (bool, error) {

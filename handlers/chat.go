@@ -115,3 +115,4 @@ func UploadFile(c echo.Context) error {
 		"filetype": filetype,
 	})
 }
+

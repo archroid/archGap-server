@@ -38,6 +38,8 @@ func main() {
 	e.POST("/updateuseravatar", handlers.UpdateUserAvatar)
 	e.GET("/getuser", handlers.GetUser)
 
+	e.GET("/getchatsbyuser", handlers.GetChatsbyUser)
+
 
 	e.POST("/uploadfile", handlers.UploadFile)
 	e.GET("/openpvchat", handlers.OpenPvChat)

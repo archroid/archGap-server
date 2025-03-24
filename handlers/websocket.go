@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"archroid/archGap/db"
-	"archroid/archGap/utils"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -35,10 +34,14 @@ var (
 
 func HandleWebSocket(c echo.Context) error {
 	// Get the user ID from the JWT token
-	userID, err := utils.ParseJWT(c.Request().Header.Get("Authorization"))
-	if err != nil {
-		return c.JSON(http.StatusUnauthorized, map[string]string{"message": "Invalid or expired token"})
-	}
+	// userID, err := utils.ParseJWT(c.Request().Header.Get("Authorization"))
+	// log.Println(c.Request().Header.Get("Authorization"))
+
+	// if err != nil {
+	// 	return c.JSON(http.StatusUnauthorized, map[string]string{"message": "Invalid or expired token"})
+	// }
+
+	userID := uint(1)
 
 	var upgrader = websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {
