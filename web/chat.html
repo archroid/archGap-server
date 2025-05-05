@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chat - Archify</title>
+  <link rel="stylesheet" href="chat.css" />
+</head>
+<body>
+
+  <div class="chat-app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h2 class="logo">💬 Archify</h2>
+      <div class="chat-list">
+        <div class="chat-item active">
+          <div class="avatar">A</div>
+          <div class="chat-info">
+            <p class="name">Alice</p>
+            <p class="last-msg">Hey, are you there?</p>
+          </div>
+        </div>
+        <div class="chat-item">
+          <div class="avatar">B</div>
+          <div class="chat-info">
+            <p class="name">Bob</p>
+            <p class="last-msg">Let's catch up soon.</p>
+          </div>
+        </div>
+        <!-- Add more chat items as needed -->
+      </div>
+    </aside>
+
+    <!-- Main Chat Area -->
+    <main class="chat-main">
+      <div class="chat-header">
+        <h3>Alice</h3>
+      </div>
+      <div class="chat-messages">
+        <div class="message received">Hi! How's it going?</div>
+        <div class="message sent">All good! You?</div>
+      </div>
+      <div class="chat-input">
+        <input type="text" placeholder="Type a message..." />
+        <button>Send</button>
+      </div>
+    </main>
+  </div>
+  <script src="chat.js"></script>
+
+</body>
+</html>
