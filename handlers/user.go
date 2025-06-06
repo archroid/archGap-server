@@ -74,11 +74,13 @@ func Login(c echo.Context) error {
 	})
 }
 func Verifytoken(c echo.Context) error {
-	_, err := utils.ParseJWT(c.Request().Header.Get("Authorization"))
+	userid, err := utils.ParseJWT(c.Request().Header.Get("Authorization"))
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, nil)
 	} else {
-		c.JSON(http.StatusOK, nil)
+		c.JSON(http.StatusOK, map[string]uint{
+			"userID": userid,
+		})
 	}
 	return nil
 }
