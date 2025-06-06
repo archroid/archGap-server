@@ -53,9 +53,11 @@ function verifyToken() {
     if (!request.ok) {
       return;
     } else {
+      alert("Please log in first!");
       window.location.href = "/login";
     }
   } else {
+    alert("Please log in first!");
     window.location.href = "/login";
   }
 }
