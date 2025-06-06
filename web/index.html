@@ -2,34 +2,17 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ArchGap</title>
-    <link rel="stylesheet" href="chat.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ArchGap</title>
+  <link rel="stylesheet" href="chat.css" />
 </head>
 
 <body>
 
-    <script>
-        if (window.localStorage.getItem("token") != null) {
-
-          let request = new XMLHttpRequest();
-          request.open("POST" , "/api/verifytoken");
-          // console.log(window.localStorage.getItem("token"))
-          request.setRequestHeader("Authorization" , window.localStorage.getItem("token"));
-          request.send();
-          console.log(request);
-          console.log(request.status);
-          if (!request.ok) {
-            window.location.href = "/chat";
-          }else{
-            window.location.href = '/login';
-          }
-            }
-            else {
-                window.location.href = '/login';
-            }
-    </script>
+  <script>
+    window.location.href = '/chat';
+  </script>
 
 
 </body>
