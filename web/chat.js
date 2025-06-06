@@ -1,10 +1,28 @@
 var userid;
 var chatList;
+var chatID;
 const socket = new WebSocket("ws://localhost:8080/api/ws");
 
 // Connection opened
 socket.addEventListener("open", (event) => {
-  console.log(socket.url);
+  // console.log(socket.url);
+});
+
+// Listen for messages from the server
+socket.addEventListener("message", (event) => {
+  const data = JSON.parse(event.data);
+  if (data.type === "message") {
+    // console.log(userid)
+    console.log(data.senderID)
+    if ((data.senderID != userid)) {
+      const chatMessages = document.querySelector(".chat-messages");
+      const div = document.createElement("div");
+      div.classList.add("message", "received");
+      div.textContent = data.text;
+      chatMessages.appendChild(div);
+      chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to the bottom
+    }
+  }
 });
 
 async function main(params) {
@@ -18,20 +36,7 @@ async function main(params) {
     })
   );
 
-  // Simulated chat data
-  const chatData = {
-    Alice: [
-      { type: "received", text: "Hi! How's it going?" },
-      { type: "sent", text: "All good! You?" },
-    ],
-    Bob: [
-      { type: "received", text: "Let's catch up soon." },
-      { type: "sent", text: "Sure, just say when!" },
-    ],
-  };
-
   const chatHeader = document.querySelector(".chat-header h3");
-  const chatMessages = document.querySelector(".chat-messages");
 
   // Add click event listeners after DOM is populated
   document.querySelector(".chat-list")?.addEventListener("click", (event) => {
@@ -46,26 +51,42 @@ async function main(params) {
     const name = chatItem.querySelector(".name").innerText;
     chatHeader.textContent = name;
 
-    var chatID = chatItem.querySelector(".chatID").innerText;
+    // Extract chatID from the clicked chat item
+    chatID = chatItem.querySelector(".chatID").innerText;
 
-~
     socket.send(
       JSON.stringify({
         type: "subscribe",
         chatID: parseInt(chatID),
       })
     );
+  });
 
-    // const messages = chatData[name] || [];
-    // chatMessages.innerHTML = "";
-    // messages.forEach((msg) => {
-    //   const div = document.createElement("div");
-    //   div.classList.add("message", msg.type);
-    //   div.textContent = msg.text;
-    //   chatMessages.appendChild(div);
-    // });
+  document.querySelector(".chat-input button").addEventListener("click", () => {
+    const input = document.querySelector(".chat-input input");
+    const message = input.value.trim();
+    console.log("Sending message to:", chatID);
+    if (message) {
+      // Send message to the server
+      socket.send(
+        JSON.stringify({
+          type: "message",
+          content: message,
+          chatID: parseInt(chatID),
+          messagetype: "text",
+        })
+      );
 
-    
+      // Display the sent message in the chat
+      const chatMessages = document.querySelector(".chat-messages");
+      const div = document.createElement("div");
+      div.classList.add("message", "sent");
+      div.textContent = message;
+      chatMessages.appendChild(div);
+      chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to the bottom
+
+      input.value = ""; // Clear the input field
+    }
   });
 }
 
