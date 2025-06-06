@@ -73,7 +73,15 @@ func Login(c echo.Context) error {
 		"token": token,
 	})
 }
-
+func Verifytoken(c echo.Context) error {
+	_, err := utils.ParseJWT(c.Request().Header.Get("Authorization"))
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, nil)
+	} else {
+		c.JSON(http.StatusOK, nil)
+	}
+	return nil
+}
 func UpdateUser(c echo.Context) error {
 	// Get the user ID from the JWT token (you should pass the token in the Authorization header)
 	userID, err := utils.ParseJWT(c.Request().Header.Get("Authorization"))

@@ -32,21 +32,28 @@ func main() {
 		return c.String(http.StatusOK, "pong")
 	})
 
-	e.POST("/login", handlers.Login)
-	e.POST("/register", handlers.Register)
-	e.POST("/updateuser", handlers.UpdateUser)
-	e.POST("/updateuseravatar", handlers.UpdateUserAvatar)
-	e.GET("/getuser", handlers.GetUser)
+	e.POST("/api/login", handlers.Login)
+	e.POST("/api/register", handlers.Register)
+	e.POST("/api/updateuser", handlers.UpdateUser)
+	e.POST("/api/updateuseravatar", handlers.UpdateUserAvatar)
+	e.POST("/api/verifytoken", handlers.Verifytoken)
+	e.GET("/api/getuser", handlers.GetUser)
 
-	e.GET("/getchatsbyuser", handlers.GetChatsbyUser)
+	e.GET("/api/getchatsbyuser", handlers.GetChatsbyUser)
 
+	e.POST("/api/uploadfile", handlers.UploadFile)
+	e.GET("/api/openpvchat", handlers.OpenPvChat)
 
-	e.POST("/uploadfile", handlers.UploadFile)
-	e.GET("/openpvchat", handlers.OpenPvChat)
+	e.GET("/api/ws", handlers.HandleWebSocket)
 
-	e.GET("/ws", handlers.HandleWebSocket)
+	e.Static("/", "web")
+	e.GET("/", func(c echo.Context) error {
+		return c.File("web/index.html")
+	})
 
-	
+	e.GET("/login", func(c echo.Context) error {
+		return c.File("web/login.html")
+	})
 
 	log.Fatal(e.Start(":8080"))
 }

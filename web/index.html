@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat - Archify</title>
+    <link rel="stylesheet" href="chat.css" />
+</head>
+
+<body>
+
+    <!-- <div id="app">
+        <button onclick="loadPage('chat.html')">Go to Chat</button>
+      </div>
+      
+      <script>
+        function loadPage(page) {
+          fetch(page)
+            .then(res => res.text())
+            .then(html => {
+              document.getElementById('app').innerHTML = html;
+            });
+        }
+
+        if(window.localStorage.getItem("token") != null){
+            //Check if token is valid
+            
+        } else{
+            loadPage("login.html")
+        }
+      </script> -->
+
+    <script>
+        if (window.localStorage.getItem("token") != null) {
+
+          let request = new XMLHttpRequest();
+          request.open("POST" , "/api/verifytoken");
+          console.log(window.localStorage.getItem("token"))
+          request.setRequestHeader("Authorization" , window.localStorage.getItem("token"));
+          request.send();
+          console.log(request);
+          if (request.status === 200) {
+            console.log(JSON.parse(request.response));
+          } else{
+            console.log(`error ${request.status} ${request.statusText}`);
+          }
+
+            }
+            else {
+                window.location.href = '/login';
+            }
+    </script>
+
+
+</body>
+
+</html>
