@@ -1,3 +1,5 @@
+var userid;
+
 function verifyToken() {
   if (window.localStorage.getItem("token") != null) {
     const response = fetch("/api/verifytoken", {
@@ -7,10 +9,22 @@ function verifyToken() {
       },
     });
 
-    if (response.ok == false) {
+    response.then((res) => {
+      if (res.ok) {
+        return res.json();
+      } else {
+        throw new Error("Token verification failed");
+      }
+    }).then((data) => {   
+      userid = data.userID; // Assuming the response contains userID
+    }
+    ).catch((error) => {
+      // console.error("Error verifying token:", error);
       alert("Please log in first!");
       window.location.href = "/login";
     }
+    );
+
   } else {
     alert("Please log in first!");
     window.location.href = "/login";
@@ -39,7 +53,7 @@ try {
 
       chatList.forEach((chat) => {
         const participant = chat.Participants.find(
-          (p) => p.ID !== 5 // Assuming the current user has ID 5
+          (p) => p.ID !== userid
         );
         const chatItem = document.createElement("div");
         chatItem.classList.add("chat-item");
