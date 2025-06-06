@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"archroid/archGap/db"
+	"archroid/archGap/utils"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -20,6 +21,7 @@ type WebSocketMessage struct {
 	Content     string `json:"content"`
 	Status      string `json:"status"`
 	MessageType string `json:"messageType"`
+	Token       string `json:"token"`
 }
 
 type WebSocketConnection struct {
@@ -36,12 +38,11 @@ func HandleWebSocket(c echo.Context) error {
 	// Get the user ID from the JWT token
 	// userID, err := utils.ParseJWT(c.Request().Header.Get("Authorization"))
 	// log.Println(c.Request().Header.Get("Authorization"))
+	var userID uint
 
 	// if err != nil {
 	// 	return c.JSON(http.StatusUnauthorized, map[string]string{"message": "Invalid or expired token"})
 	// }
-
-	userID := uint(1)
 
 	var upgrader = websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {
@@ -55,11 +56,6 @@ func HandleWebSocket(c echo.Context) error {
 		return err
 	}
 	defer conn.Close()
-
-	// Lock and store the user's connection
-	mutex.Lock()
-	userConnections[userID] = conn
-	mutex.Unlock()
 
 	for {
 		messageType, p, err := conn.ReadMessage()
@@ -76,9 +72,21 @@ func HandleWebSocket(c echo.Context) error {
 			}
 
 			// Handle subscription to a chat
-			if msg.Type == "subscribe" && msg.ChatID != 0 {
+			if msg.Type == "verify" {
+				userID, err = utils.ParseJWT(msg.Token)
+				if err != nil {
+					log.Println(err)
+				} else {
+					// Lock and store the user's connection
+					mutex.Lock()
+					userConnections[userID] = conn
+					mutex.Unlock()
+
+				}
+
+			} else if msg.Type == "subscribe" && msg.ChatID != 0 && userID != 0 {
 				subscribeUserToChat(userID, msg.ChatID, conn)
-			} else if msg.Type == "unsubscribe" && msg.ChatID != 0 {
+			} else if msg.Type == "unsubscribe" && msg.ChatID != 0 && userID != 0 {
 				unsubscribeUserFromChat(userID, msg.ChatID)
 			} else if msg.Type == "message" && msg.Content != "" {
 				// Handle sending a message to the chat

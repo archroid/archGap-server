@@ -66,6 +66,8 @@ body {
   border-radius: 50%;
 }
 
+
+
 .status-indicator {
   position: absolute;
   bottom: 0;
@@ -89,6 +91,10 @@ body {
 .chat-info .last-msg {
   font-size: 0.85rem;
   color: #aaa;
+}
+
+.chatID {
+  font-size: 0px;
 }
 
 /* Main chat */

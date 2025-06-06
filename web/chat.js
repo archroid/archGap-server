@@ -1,24 +1,34 @@
 var userid;
 var chatList;
+const socket = new WebSocket("ws://localhost:8080/api/ws");
+
+// Connection opened
+socket.addEventListener("open", (event) => {
+  console.log(socket.url);
+});
 
 async function main(params) {
   userid = await verifyToken();
   chatList = await getChatList();
 
+  socket.send(
+    JSON.stringify({
+      type: "verify",
+      token: window.localStorage.getItem("token"),
+    })
+  );
 
-
-
-// Simulated chat data
-const chatData = {
-  Alice: [
-    { type: "received", text: "Hi! How's it going?" },
-    { type: "sent", text: "All good! You?" },
-  ],
-  Bob: [
-    { type: "received", text: "Let's catch up soon." },
-    { type: "sent", text: "Sure, just say when!" },
-  ],
-};
+  // Simulated chat data
+  const chatData = {
+    Alice: [
+      { type: "received", text: "Hi! How's it going?" },
+      { type: "sent", text: "All good! You?" },
+    ],
+    Bob: [
+      { type: "received", text: "Let's catch up soon." },
+      { type: "sent", text: "Sure, just say when!" },
+    ],
+  };
 
   const chatHeader = document.querySelector(".chat-header h3");
   const chatMessages = document.querySelector(".chat-messages");
@@ -36,21 +46,27 @@ const chatData = {
     const name = chatItem.querySelector(".name").innerText;
     chatHeader.textContent = name;
 
-    const messages = chatData[name] || [];
-    chatMessages.innerHTML = "";
-    messages.forEach((msg) => {
-      const div = document.createElement("div");
-      div.classList.add("message", msg.type);
-      div.textContent = msg.text;
-      chatMessages.appendChild(div);
-    });
+    var chatID = chatItem.querySelector(".chatID").innerText;
+
+~
+    socket.send(
+      JSON.stringify({
+        type: "subscribe",
+        chatID: parseInt(chatID),
+      })
+    );
+
+    // const messages = chatData[name] || [];
+    // chatMessages.innerHTML = "";
+    // messages.forEach((msg) => {
+    //   const div = document.createElement("div");
+    //   div.classList.add("message", msg.type);
+    //   div.textContent = msg.text;
+    //   chatMessages.appendChild(div);
+    // });
+
+    
   });
-
-
-
-
-
-
 }
 
 function verifyToken() {
@@ -121,6 +137,7 @@ function getChatList() {
           </div>
           <div class="chat-info">
             <h4 class="name">${participant.Name || "Unknown User"}</h4>
+            <p class="chatID">${chat.ID}</p>
           </div>
         `;
           chatListContainer.appendChild(chatItem);
