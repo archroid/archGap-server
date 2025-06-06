@@ -39,21 +39,19 @@ try {
 
       chatList.forEach((chat) => {
         const participant = chat.Participants.find(
-          (p) => p.ID !== 5 // Assuming the current user has ID 1
+          (p) => p.ID !== 5 // Assuming the current user has ID 5
         );
         const chatItem = document.createElement("div");
         chatItem.classList.add("chat-item");
         chatItem.innerHTML = `
-            <div class="avatar">
-              <img  src="${
-                participant.ProfilePicture || "default-avatar.png"
-              }" width="40" height="40" alt="${participant.Name || "User"}">
-            </div>
-            <div class="chat-info">
-              <h4 class="name">${participant.Name || "Unknown User"}</h4>
-              <p class="last-message">Last message preview...</p>
-            </div>
-          `;
+          <div class="avatar">
+            <img src="${participant.ProfilePicture || "default-avatar.png"}" alt="${participant.Name || "User"}">
+            <div class="status-indicator ${participant.IsOnline ? "online" : ""}"></div>
+          </div>
+          <div class="chat-info">
+            <h4 class="name">${participant.Name || "Unknown User"}</h4>
+          </div>
+        `;
         chatListContainer.appendChild(chatItem);
       });
     })

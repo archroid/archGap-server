@@ -48,6 +48,7 @@ body {
 }
 
 .avatar {
+  position: relative;
   width: 40px;
   height: 40px;
   background-color: #4aa5f0;
@@ -56,6 +57,29 @@ body {
   justify-content: center;
   align-items: center;
   font-weight: bold;
+}
+
+.avatar img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.status-indicator {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  border: 2px solid #1a1a20; /* Matches sidebar background for border */
+  border-radius: 50%;
+  background-color: green; /* Default offline color */
+  visibility: hidden; /* Hidden by default */
+}
+
+.status-indicator.online {
+  visibility: visible;
 }
 
 .chat-info .name {
@@ -144,11 +168,4 @@ body {
 
 .chat-input button:hover {
   background-color: #1d4ed8;
-}
-
-.avatar img {
-  width: 40px;
-  height: 40px;
-  object-fit: cover;
-  border-radius: 50%;
 }
