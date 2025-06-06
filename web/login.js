@@ -26,11 +26,11 @@ document.forms.loginform.addEventListener("submit", async event => {
 
         const data = await response.json();
         localStorage.setItem("token", data.token); // Save token in local storage
-        alert("Login successful!");
-        console.log("User data:", data);
+        // alert("Login successful!");
+        // console.log("User data:", data);
 
         // Optionally redirect to another page
-        // window.location.href = "/dashboard.html";
+        window.location.href = "/chat";
     } catch (error) {
         errorMessage.textContent = "An error occurred during login.";
         errorMessage.style.display = "block"; // Show error message

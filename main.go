@@ -55,5 +55,9 @@ func main() {
 		return c.File("web/login.html")
 	})
 
+	e.GET("/chat", func(c echo.Context) error {
+		return c.File("web/chat.html")
+	})
+
 	log.Fatal(e.Start(":8080"))
 }
