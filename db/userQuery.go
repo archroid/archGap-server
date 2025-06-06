@@ -93,11 +93,13 @@ func UpdateUser(userID uint, name *string, profilePicture *string, lastseen *tim
 	return nil
 }
 
-
 func GetChatsbyUser(userID uint) ([]models.Chat, error) {
 	var chats []models.Chat
 
-	err := DB.Joins("JOIN chat_participants ON chat_participants.chat_id = chats.id").
+	err := DB.Preload("Participants", func(db *gorm.DB) *gorm.DB {
+		return db.Select("users.id, users.name, users.is_online, users.profile_picture")
+	}).
+		Joins("JOIN chat_participants ON chat_participants.chat_id = chats.id").
 		Where("chat_participants.user_id = ?", userID).
 		Find(&chats).Error
 
@@ -108,7 +110,6 @@ func GetChatsbyUser(userID uint) ([]models.Chat, error) {
 	return chats, nil
 }
 
-
 // return if user is online or not
 func GetUserOnline(userID uint) (bool, error) {
 	var isOnline bool
@@ -118,5 +119,3 @@ func GetUserOnline(userID uint) (bool, error) {
 	}
 	return isOnline, nil
 }
-
-

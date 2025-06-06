@@ -46,8 +46,9 @@ func main() {
 
 	e.GET("/api/ws", handlers.HandleWebSocket)
 
-	e.Static("/static", "web") // Serve static files under /static
-
+	e.Static("/", "web")
+	e.Static("/uploads", "uploads")
+	
 	e.GET("/", func(c echo.Context) error {
 		return c.File("web/index.html")
 	})
