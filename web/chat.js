@@ -1,80 +1,12 @@
 var userid;
+var chatList;
 
-function verifyToken() {
-  if (window.localStorage.getItem("token") != null) {
-    const response = fetch("/api/verifytoken", {
-      method: "POST",
-      headers: {
-        Authorization: window.localStorage.getItem("token"),
-      },
-    });
+async function main(params) {
+  userid = await verifyToken();
+  chatList = await getChatList();
 
-    response.then((res) => {
-      if (res.ok) {
-        return res.json();
-      } else {
-        throw new Error("Token verification failed");
-      }
-    }).then((data) => {   
-      userid = data.userID; // Assuming the response contains userID
-    }
-    ).catch((error) => {
-      // console.error("Error verifying token:", error);
-      alert("Please log in first!");
-      window.location.href = "/login";
-    }
-    );
 
-  } else {
-    alert("Please log in first!");
-    window.location.href = "/login";
-  }
-}
 
-verifyToken();
-
-try {
-  fetch("/api/getchatsbyuser", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: window.localStorage.getItem("token"),
-    },
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Failed to fetch chats");
-      }
-      return response.json();
-    })
-    .then((chatList) => {
-      const chatListContainer = document.querySelector(".chat-list");
-      chatListContainer.innerHTML = "";
-
-      chatList.forEach((chat) => {
-        const participant = chat.Participants.find(
-          (p) => p.ID !== userid
-        );
-        const chatItem = document.createElement("div");
-        chatItem.classList.add("chat-item");
-        chatItem.innerHTML = `
-          <div class="avatar">
-            <img src="${participant.ProfilePicture || "default-avatar.png"}" alt="${participant.Name || "User"}">
-            <div class="status-indicator ${participant.IsOnline ? "online" : ""}"></div>
-          </div>
-          <div class="chat-info">
-            <h4 class="name">${participant.Name || "Unknown User"}</h4>
-          </div>
-        `;
-        chatListContainer.appendChild(chatItem);
-      });
-    })
-    .catch((error) => {
-      console.error("Error fetching chats:", error);
-    });
-} catch (error) {
-  console.error("Unexpected error:", error);
-}
 
 // Simulated chat data
 const chatData = {
@@ -88,30 +20,24 @@ const chatData = {
   ],
 };
 
-document.addEventListener("DOMContentLoaded", () => {
   const chatHeader = document.querySelector(".chat-header h3");
   const chatMessages = document.querySelector(".chat-messages");
 
-  // Add click event listeners to chat items
-  document.querySelector(".chat-list").addEventListener("click", (event) => {
+  // Add click event listeners after DOM is populated
+  document.querySelector(".chat-list")?.addEventListener("click", (event) => {
     const chatItem = event.target.closest(".chat-item");
     if (!chatItem) return;
 
-    // Remove active class from all chat items
     document.querySelectorAll(".chat-item").forEach((item) => {
       item.classList.remove("active");
     });
 
-    // Add active class to the clicked chat item
     chatItem.classList.add("active");
-
-    // Update chat header with the selected chat name
     const name = chatItem.querySelector(".name").innerText;
     chatHeader.textContent = name;
 
-    // Load messages (simulated for now)
     const messages = chatData[name] || [];
-    chatMessages.innerHTML = ""; // Clear previous messages
+    chatMessages.innerHTML = "";
     messages.forEach((msg) => {
       const div = document.createElement("div");
       div.classList.add("message", msg.type);
@@ -119,4 +45,92 @@ document.addEventListener("DOMContentLoaded", () => {
       chatMessages.appendChild(div);
     });
   });
-});
+
+
+
+
+
+
+}
+
+function verifyToken() {
+  return new Promise((resolve, reject) => {
+    if (window.localStorage.getItem("token") != null) {
+      fetch("/api/verifytoken", {
+        method: "POST",
+        headers: {
+          Authorization: window.localStorage.getItem("token"),
+        },
+      })
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          } else {
+            throw new Error("Token verification failed");
+          }
+        })
+        .then((data) => {
+          resolve(data.userID);
+        })
+        .catch((error) => {
+          console.error("Error verifying token:", error);
+          alert("Please log in first!");
+          window.location.href = "/login";
+          reject(error);
+        });
+    } else {
+      alert("Please log in first!");
+      window.location.href = "/login";
+      reject(new Error("No token found"));
+    }
+  });
+}
+
+function getChatList() {
+  return new Promise((resolve, reject) => {
+    fetch("/api/getchatsbyuser", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: window.localStorage.getItem("token"),
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch chats");
+        }
+        return response.json();
+      })
+      .then((chatList) => {
+        chatList = chatList;
+        const chatListContainer = document.querySelector(".chat-list");
+        chatListContainer.innerHTML = "";
+
+        chatList.forEach((chat) => {
+          const participant = chat.Participants.find((p) => p.ID !== userid);
+          const chatItem = document.createElement("div");
+          chatItem.classList.add("chat-item");
+          chatItem.innerHTML = `
+          <div class="avatar">
+            <img src="${
+              participant.ProfilePicture || "default-avatar.png"
+            }" alt="${participant.Name || "User"}">
+            <div class="status-indicator ${
+              participant.IsOnline ? "online" : ""
+            }"></div>
+          </div>
+          <div class="chat-info">
+            <h4 class="name">${participant.Name || "Unknown User"}</h4>
+          </div>
+        `;
+          chatListContainer.appendChild(chatItem);
+        });
+        resolve(chatList);
+      })
+      .catch((error) => {
+        console.error("Error fetching chats:", error);
+      });
+  });
+}
+
+main();
