@@ -1,16 +1,13 @@
 function verifyToken() {
   if (window.localStorage.getItem("token") != null) {
-    let request = new XMLHttpRequest();
-    request.open("POST", "/api/verifytoken");
-    // console.log(window.localStorage.getItem("token"))
-    request.setRequestHeader(
-      "Authorization",
-      window.localStorage.getItem("token")
-    );
-    request.send();
-    if (!request.ok) {
-      return;
-    } else {
+    const response = fetch("/api/verifytoken", {
+      method: "POST",
+      headers: {
+        Authorization: window.localStorage.getItem("token"),
+      },
+    });
+
+    if (response.ok == false) {
       alert("Please log in first!");
       window.location.href = "/login";
     }
@@ -42,7 +39,7 @@ try {
 
       chatList.forEach((chat) => {
         const participant = chat.Participants.find(
-          (p) => p.ID !== 1 // Assuming the current user has ID 1
+          (p) => p.ID !== 5 // Assuming the current user has ID 1
         );
         const chatItem = document.createElement("div");
         chatItem.classList.add("chat-item");
