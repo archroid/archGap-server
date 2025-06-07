@@ -60,10 +60,13 @@ async function main(params) {
         chatID: parseInt(chatID),
       })
     );
+
+    // Show the chat input after selecting a chat
+    document.querySelector(".chat-input").classList.remove("hidden");
   });
 
   document.querySelector(".chat-input button").addEventListener("click", () => {
-    const input = document.querySelector(".chat-input input");
+    const input = document.querySelector(".chat-input input"); // Revert to input
     const message = input.value.trim();
     console.log("Sending message to:", chatID);
     if (message) {
