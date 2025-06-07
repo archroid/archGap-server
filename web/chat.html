@@ -43,7 +43,7 @@
 
       </div>
       <div class="chat-input hidden">
-        <input id="messageInput" type="text"  placeholder="Type a message..." />
+        <textarea id="messageInput" placeholder="Type a message..."></textarea>
         <button id="sendButton">Send</button>
       </div>
     </main>
@@ -54,16 +54,10 @@
     const sendButton = document.getElementById('sendButton');
     const chatInput = document.querySelector('.chat-input');
 
-    input.addEventListener('keypress', (event) => {
+    input.addEventListener('keydown', (event) => {
       if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault(); // Prevent adding a new line
         sendButton.click();
-      }
-
-      if (event.key === 'Enter' && event.shiftKey) {
-        // Allow adding a new line
-        console.log('Shift + Enter pressed, adding a new line');
-        return;
       }
     });
 
