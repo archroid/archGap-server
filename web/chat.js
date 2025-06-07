@@ -66,7 +66,7 @@ async function main(params) {
   });
 
   document.querySelector(".chat-input button").addEventListener("click", () => {
-    const input = document.querySelector(".chat-input input"); // Revert to input
+    const input = document.querySelector(".chat-input textarea"); // Revert to input
     const message = input.value.trim();
     console.log("Sending message to:", chatID);
     if (message) {
