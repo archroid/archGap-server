@@ -191,4 +191,9 @@ function showmessage(id, text) {
   chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to the bottom
 }
 
+function scrollToBottom() {
+  const chatMessages = document.querySelector(".chat-messages");
+  chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to the bottom
+}
+
 main();
