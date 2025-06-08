@@ -193,3 +193,23 @@ body {
 .hidden {
   display: none;
 }
+
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+  height: 8px; /* Height of the scrollbar */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #4aa5f0; /* Scrollbar thumb color */
+  border-radius: 4px; /* Rounded corners for the thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #2563eb; /* Thumb color on hover */
+}
+
+::-webkit-scrollbar-track {
+  background-color: #1a1a20; /* Scrollbar track color */
+  border-radius: 4px; /* Rounded corners for the track */
+}
