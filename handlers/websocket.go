@@ -142,7 +142,7 @@ func sendMessageToChat(chatID uint, message string, messageType string, userid u
 			log.Printf("Error saving message to database for chat %d: %v", chatID, err)
 		}
 
-		err = conn.WriteMessage(websocket.TextMessage, msgBytes)
+		err = conn.WriteMessage(websocket.TextMessage,msgBytes)
 		if err != nil {
 			log.Printf("Error sending message to user %d: %v", userID, err)
 		}

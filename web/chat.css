@@ -126,6 +126,7 @@ body {
   border-radius: 14px;
   font-size: 1rem;
   line-height: 1.4;
+  white-space: pre-wrap;
 }
 
 .message.received {
@@ -155,7 +156,14 @@ body {
   color: white;
   font-size: 1rem;
   max-lines: 10;
+  overflow-y: scroll; /* Enable scrolling */
+  scrollbar-width: none; /* Hide scrollbar in Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar in IE/Edge */
 }
+
+.chat-input textarea::-webkit-scrollbar {
+  display: none; /* Hide scrollbar in Chrome/Safari */
+} 
 
 .chat-input textarea::placeholder {
   color: #aaa;

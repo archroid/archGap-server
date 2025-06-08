@@ -43,7 +43,7 @@
 
       </div>
       <div class="chat-input hidden">
-        <textarea id="messageInput" placeholder="Type a message..."></textarea>
+        <textarea id="messageInput" placeholder="Type a message..." rows="1"></textarea>
         <button id="sendButton">Send</button>
       </div>
     </main>
@@ -59,7 +59,17 @@
         event.preventDefault(); // Prevent adding a new line
         sendButton.click();
       }
+      if (event.key === 'Enter') {
+        currentRows = input.value.split('\n').length;
+
+        if (currentRows <= 10) {
+          input.rows = String(currentRows + 1); // Adjust rows to show more lines
+
+        }
+      }
     });
+
+
 
     function showChatInput() {
       chatInput.classList.remove('hidden');

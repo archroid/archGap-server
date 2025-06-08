@@ -12,8 +12,9 @@ socket.addEventListener("open", (event) => {
 socket.addEventListener("message", (event) => {
   const data = JSON.parse(event.data);
   if (data.type === "message") {
+    console.log(data)
     // console.log(userid)
-    console.log(data.senderID)
+    // console.log(data.senderID)
     if ((data.senderID != userid)) {
       const chatMessages = document.querySelector(".chat-messages");
       const div = document.createElement("div");
@@ -67,9 +68,9 @@ async function main(params) {
 
   document.querySelector(".chat-input button").addEventListener("click", () => {
     const input = document.querySelector(".chat-input textarea"); // Revert to input
-    const message = input.value.trim();
-    console.log("Sending message to:", chatID);
+    const message = input.value;
     if (message) {
+
       // Send message to the server
       socket.send(
         JSON.stringify({
