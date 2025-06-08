@@ -3,33 +3,13 @@ var chatList;
 var chatID;
 const socket = new WebSocket("ws://localhost:8080/api/ws");
 
-// Connection opened
-socket.addEventListener("open", (event) => {
-  // console.log(socket.url);
-});
-
-// Listen for messages from the server
-socket.addEventListener("message", (event) => {
-  const data = JSON.parse(event.data);
-  if (data.type === "message") {
-    console.log(data)
-    // console.log(userid)
-    // console.log(data.senderID)
-    if ((data.senderID != userid)) {
-      const chatMessages = document.querySelector(".chat-messages");
-      const div = document.createElement("div");
-      div.classList.add("message", "received");
-      div.textContent = data.text;
-      chatMessages.appendChild(div);
-      chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to the bottom
-    }
-  }
-});
-
 async function main(params) {
   userid = await verifyToken();
   chatList = await getChatList();
 
+  setupsocket();
+
+  //verify socket connection
   socket.send(
     JSON.stringify({
       type: "verify",
@@ -70,7 +50,6 @@ async function main(params) {
     const input = document.querySelector(".chat-input textarea"); // Revert to input
     const message = input.value;
     if (message) {
-
       // Send message to the server
       socket.send(
         JSON.stringify({
@@ -81,13 +60,7 @@ async function main(params) {
         })
       );
 
-      // Display the sent message in the chat
-      const chatMessages = document.querySelector(".chat-messages");
-      const div = document.createElement("div");
-      div.classList.add("message", "sent");
-      div.textContent = message;
-      chatMessages.appendChild(div);
-      chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to the bottom
+      showmessage(userid, message);
 
       input.value = ""; // Clear the input field
     }
@@ -173,6 +146,67 @@ function getChatList() {
         console.error("Error fetching chats:", error);
       });
   });
+}
+
+function setupsocket() {
+  // Connection opened
+  socket.addEventListener("open", (event) => {
+    // console.log("WebSocket connection established");
+  });
+
+  // Listen for messages from the server
+  socket.addEventListener("message", (event) => {
+    const data = JSON.parse(event.data);
+    if (data.type === "message") {
+      if (data.senderID != userid) {
+        const chatMessages = document.querySelector(".chat-messages");
+        const div = document.createElement("div");
+        div.classList.add("message", "received");
+        div.textContent = data.text;
+        chatMessages.appendChild(div);
+        chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to the bottom
+      }
+    }
+  });
+}
+
+function getChatMessages(chatID) {
+  // return new Promise((resolve, reject) => {
+  //   fetch(`/api/getchatmessages/${chatID}`, {
+  //     method: "GET",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Authorization: window.localStorage.getItem("token"),
+  //     },
+  //   })
+  //     .then((response) => {
+  //       if (!response.ok) {
+  //         throw new Error("Failed to fetch chat messages");
+  //       }
+  //       return response.json();
+  //     })
+  //     .then((messages) => {
+  //       resolve(messages);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching chat messages:", error);
+  //       reject(error);
+  //     });
+  // });
+}
+
+function showmessage(id, text) {
+  var messagetype = "received"; // Default to received message
+  if (id == userid) {
+    messagetype = "sent";
+  }
+  // Display the sent message in the chat
+  const chatMessages = document.querySelector(".chat-messages");
+  const div = document.createElement("div");
+  div.classList.add("message", messagetype);
+  div.textContent = text;
+  chatMessages.appendChild(div);
+  chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to the bottom
 }
 
 main();
