@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"archroid/archGap/db"
+	"archroid/archGap/models"
 	"archroid/archGap/utils"
 	"encoding/json"
 	"log"
@@ -71,7 +72,20 @@ func HandleWebSocket(c echo.Context) error {
 			}
 
 			// Handle subscription to a chat
-			if msg.Type == "verify" {
+
+			if msg.Type == "message" && msg.Content != "" {
+				// Handle sending a message to the chat
+				sendMessageToChat(msg.ChatID, msg.Content, msg.MessageType, userID)
+			} else if msg.Type == "getmessages" {
+				// Handle fetching messages for a chat
+				messages, err := db.GetMessagesinChat(msg.ChatID)
+				if err != nil {
+					log.Println("Error fetching messages:", err)
+					continue
+				}
+				sendMessagestoChat(msg.ChatID, messages)
+
+			} else if msg.Type == "verify" {
 				userID, err = utils.ParseJWT(msg.Token)
 				if err != nil {
 					log.Println(err)
@@ -87,9 +101,6 @@ func HandleWebSocket(c echo.Context) error {
 				subscribeUserToChat(userID, msg.ChatID, conn)
 			} else if msg.Type == "unsubscribe" && msg.ChatID != 0 && userID != 0 {
 				unsubscribeUserFromChat(userID, msg.ChatID)
-			} else if msg.Type == "message" && msg.Content != "" {
-				// Handle sending a message to the chat
-				sendMessageToChat(msg.ChatID, msg.Content, msg.MessageType, userID)
 			}
 		}
 	}
@@ -142,9 +153,28 @@ func sendMessageToChat(chatID uint, message string, messageType string, userid u
 			log.Printf("Error saving message to database for chat %d: %v", chatID, err)
 		}
 
-		err = conn.WriteMessage(websocket.TextMessage,msgBytes)
+		err = conn.WriteMessage(websocket.TextMessage, msgBytes)
 		if err != nil {
 			log.Printf("Error sending message to user %d: %v", userID, err)
+		}
+	}
+}
+
+func sendMessagestoChat(chatID uint, messages []models.Message) {
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	// Loop through all users subscribed to the chat and send them the messages
+	for userID, conn := range chatSubscriptions[chatID] {
+		msg := map[string]interface{}{
+			"type":     "messages",
+			"messages": messages,
+		}
+		msgBytes, _ := json.Marshal(msg)
+
+		err := conn.WriteMessage(websocket.TextMessage, msgBytes)
+		if err != nil {
+			log.Printf("Error sending messages to user %d: %v", userID, err)
 		}
 	}
 }

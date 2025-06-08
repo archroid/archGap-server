@@ -42,6 +42,13 @@ async function main(params) {
       })
     );
 
+    socket.send(
+      JSON.stringify({
+        type: "getmessages",
+        chatID: parseInt(chatID),
+      })
+    );
+
     // Show the chat input after selecting a chat
     document.querySelector(".chat-input").classList.remove("hidden");
   });
@@ -159,40 +166,15 @@ function setupsocket() {
     const data = JSON.parse(event.data);
     if (data.type === "message") {
       if (data.senderID != userid) {
-        const chatMessages = document.querySelector(".chat-messages");
-        const div = document.createElement("div");
-        div.classList.add("message", "received");
-        div.textContent = data.text;
-        chatMessages.appendChild(div);
-        chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to the bottom
+        showmessage(data.senderID, data.text);
       }
     }
+    if (data.type === "messages") {
+      data.messages.forEach((message) => {
+        showmessage(message.SenderID, message.Content);
+      });
+    }
   });
-}
-
-function getChatMessages(chatID) {
-  // return new Promise((resolve, reject) => {
-  //   fetch(`/api/getchatmessages/${chatID}`, {
-  //     method: "GET",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Authorization: window.localStorage.getItem("token"),
-  //     },
-  //   })
-  //     .then((response) => {
-  //       if (!response.ok) {
-  //         throw new Error("Failed to fetch chat messages");
-  //       }
-  //       return response.json();
-  //     })
-  //     .then((messages) => {
-  //       resolve(messages);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching chat messages:", error);
-  //       reject(error);
-  //     });
-  // });
 }
 
 function showmessage(id, text) {
