@@ -69,6 +69,12 @@
       }
     });
 
+    input.addEventListener('input', () => {
+      if (input.value.trim() == '') {
+        input.rows = String(1);
+      }
+    });
+
 
 
     function showChatInput() {

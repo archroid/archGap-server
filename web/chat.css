@@ -160,6 +160,7 @@ body {
   color: white;
   font-size: 1rem;
   max-lines: 10;
+  resize: none; /* Disable resizing */
   font-family: sans-serif;
   overflow-y: scroll; /* Enable scrolling */
   scrollbar-width: none; /* Hide scrollbar in Firefox */
